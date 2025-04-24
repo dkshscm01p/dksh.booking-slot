@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Slot</title>
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+        * {
+            font-family: 'Open Sans';
+        }
+
+        .material-icons {
+            display: inline-flex;
+            vertical-align: text-bottom;
+        }
+    </style>
+
+
+    <% if (session.token !=undefined) { %>
+
+        <div class="flex flex-col sticky top-0 bg-white">
+
+            <nav class="flex p-2 items-center justify-between shadow border">
+                <img class="h-10 w-22 hidden md:block"
+                    src="https://scientific.dksh.co.th/wp-content/uploads/2023/06/DKSH_hori_red_rgb-2048x655.png">
+
+                <div class="space-x-4 font-semibold text-sm">
+                    
+
+                            <div class="relative inline-block text-left">
+                                <div>
+                                    <button type="button"
+                                        class="inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100"
+                                        id="menu-button" aria-expanded="true" aria-haspopup="true">
+                                        Options
+                                        <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                                            aria-hidden="true" data-slot="icon">
+                                            <path fill-rule="evenodd"
+                                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="absolute -right-30 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none hidden"
+                                    role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                                    <div class="py-1" role="none">
+
+                                                    <a class="block px-4 py-2 hover:text-red-600 hover:no-underline hover:bg-gray-100 text-black hover:border-l-4 hover:border-red-600"
+                                                        href="/info"
+                                                        tabindex="-1"
+                                                        role="menuitem">Booking Slot</a>
+                                                    <a class="block px-4 py-2 hover:text-red-600 hover:no-underline hover:bg-gray-100 text-black hover:border-l-4 hover:border-red-600"
+                                                        href="/mySchedule"
+                                                        tabindex="-1"
+                                                        role="menuitem">My Schedule</a>
+                                                    <a class="block px-4 py-2 hover:text-red-600 hover:no-underline hover:bg-gray-100 text-black hover:border-l-4 hover:border-red-600"
+                                                        href="/dashboard"
+                                                        tabindex="-1"
+                                                        role="menuitem">Dashboard</a>
+                                                    <% if (session.level=='Admin' ) { %>
+                                                        <a class="block px-4 py-2 hover:text-red-600 hover:no-underline hover:bg-gray-100 text-black hover:border-l-4 hover:border-red-600"
+                                                            href="manageUser"
+                                                            tabindex="-1"
+                                                            role="menuitem">Manage User</a>
+                                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <i class="fa-solid fa-user"></i>
+                            <h class="ml-2">
+                                <%= name %>
+                            </h>
+
+                            <a class="bg-red-600 text-white p-2 px-4 rounded-md hover:bg-red-500 " href="/logout"
+                                onclick="return confirm('Are you sure to logout?')">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                Logout
+                            </a>
+                </div>
+            </nav>
+        </div>
+
+        <% } %>
+
+</head>
+
+<script>
+
+    let btnMenu = document.getElementById('menu-button');
+    let dropdown = document.querySelector(".relative .absolute");
+
+    // Open/Close dropdown
+    btnMenu.addEventListener('click', (event) => {
+        event.stopPropagation(); // ป้องกันการแพร่คลิกออกไปนอกปุ่ม
+        dropdown.classList.toggle('hidden');
+    })
+
+    // Hide dropdown when click anywhere
+    document.addEventListener('click', (event) => {
+        if (!dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('hidden');
+        }
+    })
+
+</script>
+
+<body>

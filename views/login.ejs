@@ -1,0 +1,69 @@
+<%- include('header') %>
+    
+<form method="post" action="/login">
+
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="bg-white relative flex rounded-xl shadow-lg m-6">
+        
+        <div class="relative flex flex-col items-center justify-center p-16">
+            <div class="flex flex-col items-start justify-start w-full">
+            <!-- DKSH Logo -->
+            <img 
+            class="h-10 w-22"
+            src="https://scientific.dksh.co.th/wp-content/uploads/2023/06/DKSH_hori_red_rgb-2048x655.png">
+                
+            <span class="text-xl font-semibold mt-6">Login</span>
+            <!-- <span class="text-sm font-light text-gray-400">Please enter your username</span> -->
+            </div>
+
+            <div class="absolute top-24 left-40 font-semibold text-xl text-sky-500">
+                <span>CG BN20</span>
+            </div>
+
+            <div class="flex flex-col items-start w-full py-4 space-y-2">
+                <span class="text-sm font-semibold">
+                <i class="fa-solid fa-user"></i>
+                Username
+                </span>
+                <input
+                class="text-xs w-full border border-gray-300 p-1 px-2 rounded-sm placeholder:font-light"
+                placeholder="Enter your username"
+                type="text"
+                name="usr">
+            </div>
+
+            <div class="flex flex-col items-start w-full space-y-2">
+                <span class="text-sm font-semibold">
+                <i class="fa-solid fa-key"></i>
+                Password
+                </span>
+                <input
+                class="text-xs w-full border border-gray-300 p-1 px-2 rounded-sm placeholder:font-light"
+                placeholder="Enter your password"
+                type="password"
+                name="pwd">
+            </div>
+
+            <div class="text-white flex flex-col space-y-3 py-5 w-full">
+                <button class="bg-black rounded-lg p-2 text-sm w-full">Login</button>
+            </div>
+
+            <div class="py-4 text-sm space-x-1">
+                <span class="text-gray-500">Don't have an account?
+                    <a class="hover:text-gray-600 underline" href="/signupUser">Sign up</a>
+                </span>
+            </div>
+        </div>
+
+        <div class="relative">
+            <img
+            class="w-[350px] h-full hidden md:block rounded-r-xl object-cover object-left backdrop-blur-sm"
+            src="/images/History_HK_Junkboat.jpg" alt="">
+        </div>
+
+    </div>
+
+</form>
+
+</body>
+</html>

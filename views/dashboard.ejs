@@ -1,0 +1,199 @@
+<%- include('header') %>
+
+  <div class="bg-gray-200 min-h-screen">
+    <div class="flex flex-col">
+
+      <!-- button select period -->
+      <div class="flex items-center justify-start gap-1 px-2 py-4">
+        <button class="bg-gray-100 hover:bg-gray-300 border rounded-lg text-sm shadow-md px-3 py-2 filter-btn" id="D1"
+          data-range="D1">D1</button>
+        <button class="bg-gray-100 hover:bg-gray-300 border rounded-lg text-sm shadow-md px-3 py-2 filter-btn" id="W1"
+          data-range="W1">W1</button>
+        <button class="bg-gray-100 hover:bg-gray-300 border rounded-lg text-sm shadow-md px-3 py-2 filter-btn" id="M1"
+          data-range="M1">M1</button>
+        <button class="bg-gray-100 hover:bg-gray-300 border rounded-lg text-sm shadow-md px-3 py-2 filter-btn" id="M3"
+          data-range="M3">M3</button>
+      </div>
+
+      <!-- Infomation
+
+    <div class="flex items-start justify-center w-full gap-2 mt-10">
+      <div class="bg-white p-4 shadow-md rounded-lg font-bold">Total Cases incoming
+          <div class="font-normal text-xl mt-2" id="totl_cases_incoming"><%= totalCases %> Cases</div>
+      </div>
+      
+      <div class="bg-white p-4 shadow-md rounded-lg font-bold">Total Pallets
+          <div class="font-normal text-xl mt-2"><%= totalPallet %> Pallet</div>
+      </div>
+
+    </div>   -->
+
+      <!-- Chart -->
+      <div class="flex items-start justify-start gap-4 mt-6 ml-10">
+
+        <div class="max-w-sm w-full bg-white rounded-lg shadow-md dark:bg-gray-800 p-4 md:p-6">
+          <div class="flex justify-between border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+              <div>
+                <h5 class="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">
+                  <%= totalCases %> Cases
+                </h5>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div id="column-chart"></div>
+          <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
+            <div class="flex justify-between items-center"></div>
+          </div>
+
+        </div>
+
+        <!-- table volumn company -->
+
+        <div class="">
+          <table class="table-auto bg-white rounded-md shadow-md">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2">Company</th>
+                <th class="px-4">Total Cases</th>
+                <th class="px-4">Total Pallet</th>
+                <th class="px-4">Total Truck</th>
+              </tr>
+            </thead>
+
+            <% sum_bookings.forEach((booking)=> { %>
+              <tbody class="text-center">
+                <tr class="text-sm">
+                  <td class="py-1">
+                    <%= booking.company %>
+                  </td>
+                  <td>
+                    <%= booking.totl_cases %>
+                  </td>
+                  <td>
+                    <%= booking.totl_pallet %>
+                  </td>
+                  <td>
+                    <%= booking.totl_truck %>
+                  </td>
+                </tr>
+              </tbody>
+              <% }) %>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <%- include('footer') %>
+
+    <script>
+
+      document.addEventListener("DOMContentLoaded", () => {
+
+        const buttons = document.querySelectorAll(".filter-btn");
+        const savedRange = localStorage.getItem("selectedRange") || "1D";
+
+        console.log(savedRange);
+        // Apply stored selection
+        buttons.forEach(button => {
+
+          button.addEventListener("click", () => {
+            // Remove highlight from all buttons
+            buttons.forEach(btn => btn.classList.remove("bg-gray-300"));
+            // Highlight the clicked button
+            button.classList.add("bg-gray-300");
+
+            // Save the selected button in localStorage
+            localStorage.setItem("selectedRange", button.getAttribute("data-range"));
+
+            // Redirect with the selected range as a URL parameter
+            window.location.href = `/dashboard?range=${button.getAttribute("data-range")}`;
+
+          });
+        });
+      });
+
+
+      // Chart Cases Volumn
+      document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".filter-btn");
+        const savedRange = localStorage.getItem("selectedRange") || "D1";
+        let chart;
+
+        async function fetchChartData(range) {
+          try {
+            const response = await fetch(`/api/getChartData?range=${range}`);
+            const data = await response.json();
+
+            // Convert SQL data to chart format
+            return [{
+              name: "Cases",
+              data: data.map(item => ({ x: item.x, y: item.y }))
+              
+            }];
+            
+          } catch (error) {
+            console.error("Error fetching chart data:", error);
+            return [{ name: "Cases", data: [] }];
+          }
+        }
+
+        async function renderChart(range) {
+          const seriesData = await fetchChartData(range);
+          const options = {
+            series: seriesData,
+            chart: { type: "bar", height: "200px" },
+            xaxis: {
+              categories: seriesData[0].data.map(item => item.x),
+              labels: { rotate: -45 } // Rotate labels for better readability
+            },
+            colors: ["#1A56DB"],
+            plotOptions: {
+              bar: { columnWidth: range === "M3" ? "30%" : range === "M1" ? "60%" : "15%", borderRadius: 6 }
+            },
+            stroke: { show: true, width: 2, colors: ["transparent"] },
+            dataLabels: { enabled: false },
+            tooltip: { shared: true, intersect: false }
+          };
+
+          if (chart) {
+            chart.updateOptions(options);
+            chart.updateSeries(seriesData);
+          } else {
+            chart = new ApexCharts(document.getElementById("column-chart"), options);
+            chart.render();
+          }
+        }
+
+        renderChart(savedRange);
+
+        async function fetchChartData(range) {
+          try {
+            const response = await fetch(`/api/getChartData?range=${range}`);
+            const data = await response.json();
+
+            return [{
+              name: "Cases",
+              data: data.map(item => ({
+                x: formatDate(item.x), // Format the date
+                y: item.y
+              }))
+            }];
+          } catch (error) {
+            console.error("Error fetching chart data:", error);
+            return [{ name: "Cases", data: [] }];
+          }
+        }
+
+        // Function to format the date
+        function formatDate(dateString) {
+          const date = new Date(dateString);
+          return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+        }
+      });
+
+    </script>

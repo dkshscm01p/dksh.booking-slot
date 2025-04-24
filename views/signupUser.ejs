@@ -1,0 +1,88 @@
+<%- include('header') %>
+
+    <form action="/addUser" method="post" id="addUserform">
+        <div class="flex flex-col items-center justify-center min-h-screen">
+
+            <div class="bg-white py-16 px-20 rounded-xl shadow-lg">
+                <span class="text-xl font-semibold text-center w-full">
+                    <i class="fa-solid fa-user-plus"></i> Sign up</span>
+                <div class="mt-4 font-semibold">Username</div>
+                <input class="border mt-2 px-2 w-full" type="text" name="usr" id="usr">
+                <div></div>
+                <div class="mt-2 font-semibold">Password</div>
+                <input class="border mt-2 px-2 w-full" type="password" name="pwd" id="pwd">
+                <div class="mt-2 font-semibold">Name</div>
+                <input class="border mt-2 px-2 w-full" type="text" name="name" id="name">
+                <div class="mt-2 font-semibold">Email</div>
+                <input class="border mt-2 px-2 w-full" type="email" name="email" id="email">
+                <div class="mt-4 font-semibold">Company name</div>
+                <input class="border mt-2 px-2 w-full" type="text" name="company" id="company">
+                <div>
+                
+                <div class="text-red-600 mt-4" id="usrcriteria">* Username must be at least 6 character </div>
+                <div class="text-red-600 mt-1" id="pwdcriteria">* Password must be at least 8 character </div>
+                    <button class="bg-black text-white text-sm font-semibold p-2 rounded-lg w-full mt-4 hover:bg-blue-500"
+                        type="submit">
+                        Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <%- include('footer') %>
+
+    <script>
+
+        // ตรวจสอบว่ากรอกข้อมูลครบไหม
+        document.getElementById('addUserform').addEventListener('submit', function(event) {
+            let usr = document.getElementById('usr').value.trim();
+            let pwd = document.getElementById('pwd').value.trim();
+            let name = document.getElementById('name').value.trim();
+            let email = document.getElementById('email').value.trim();
+            let company = document.getElementById('company').value.trim();
+
+        if (!usr || !pwd || !name || !email || !company || usr.length < 6 || pwd.length < 8) {
+            event.preventDefault(); // ป้องกันการส่งฟอร์มหากข้อมูลไม่ครบ
+            alert("Please fill in all required fields."); // แจ้งเตือนผู้ใช้
+        }
+    });
+
+        // เปลี่ยนสีเงื่อนไข หากจำนวนตัวอักษรครบตามที่กำหนด
+        document.addEventListener("DOMContentLoaded", function() {
+            let usr = document.getElementById('usr');
+            let pwd = document.getElementById('pwd');
+            let usrcriteria = document.getElementById('usrcriteria');
+            let pwdcriteria = document.getElementById('pwdcriteria');
+
+            if (usr) {
+                usr.addEventListener('input', () => {
+                    if (usr.value.length >= 6) {
+                        usrcriteria.classList.remove('text-red-600');
+                        usrcriteria.classList.add('text-green-600')
+                        usrcriteria.innerHTML = '<i class="fa-solid fa-check"></i> Username must be at least 6 characters'
+                    } else {
+                        usrcriteria.classList.add('text-red-600')
+                        usrcriteria.classList.remove('text-green-600')
+                        usrcriteria.innerText = "* Username must be at least 8 character"
+                    }
+                })
+            }
+
+            if (pwd) {
+                pwd.addEventListener('input', () => {
+                    if (pwd.value.length >= 8) {
+                        pwdcriteria.classList.remove('text-red-600');
+                        pwdcriteria.classList.add('text-green-600')
+                        pwdcriteria.innerHTML = '<i class="fa-solid fa-check"></i> Password must be at least 8 characters';
+                    } else {
+                        pwdcriteria.classList.add('text-red-600')
+                        pwdcriteria.classList.remove('text-green-600')
+                        pwdcriteria.innerText = "* Password must be at least 8 character"
+                        
+                    }
+                })
+            }
+        })
+
+        
+    </script>

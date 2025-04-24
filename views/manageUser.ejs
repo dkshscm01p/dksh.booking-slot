@@ -1,0 +1,45 @@
+<%- include('header') %>
+
+<div class="bg-gray-700 h-screen">
+    
+    <div class="table-responsive overflow-y-hidden">
+        <table class="text-center text-white mt-10 w-full text-xs">
+            <thead class="bg-slate-900">
+                <tr>
+                    <th class="px-4 py-2 rounded-tl-md w-10"></th>
+                    <th class="px-4 py-2 w-20">Name</th>
+                    <th class="px-4 py-2 w-20">Company</th>
+                    <th class="px-4 py-2 rounded-tr-md w-20">Level</th>
+                </tr>
+            </thead>
+
+            <tbody class="bg-slate-800">
+                <% userProfiles.forEach((userProfile) => { %>
+                <tr class="h-9">
+                    <td>
+                        <div class="space-x-2">      
+                            <a class="px-2 py-1 bg-red-600 text-white rounded-md" href="/deleteUser/<%= userProfile.id %>" 
+                            onclick="return confirm('Are you sure to delete')">
+                            <span class="material-symbols-outlined material-icons" style="font-size: 15px;">
+                                delete
+                            </span>
+                            </a>
+                            <a class="px-2 py-1 bg-cyan-600 text-white rounded-md" href="/editUser/<%= userProfile.id %>">
+                            <span class="material-symbols-outlined material-icons" style="font-size: 15px;">
+                                edit
+                            </span>
+                            </a>
+                        </div>
+                    </td>
+                    <td><%= userProfile.name %></td>
+                    <td><%= userProfile.company %></td>
+                    <td><%= userProfile.level %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include('footer') %>
+

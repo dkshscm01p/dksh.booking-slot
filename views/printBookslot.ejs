@@ -1,0 +1,100 @@
+<%- include('headerPrinter') %>
+
+    <div class="sheet-outer">
+        <section class="sheet">
+            <!-- <div class="text-xl font-bold">บริษัท ดีเคเอสเอช (ประเทศไทย) จำกัด</div>
+            <div>ผลิตภัณฑ์อุปโภคบริโภค</div>
+            <div>2535 ถนนสุขุมวิท แขวงบางจาก เขตพระโขนง กรุงเทพฯ 10260</div>
+            <div>โทร. 02-790-8000 โทรสาร 0-2332-6101</div>
+            <div>หมายเลขประจำตัวผู้เสียภาษี </div> -->
+
+            <div class="flex items-center justify-between">
+            <img class="" style="height: 50px; width: 150px;"
+            src="https://scientific.dksh.co.th/wp-content/uploads/2023/06/DKSH_hori_red_rgb-2048x655.png">
+
+            <!-- SVG for Barcode -->
+            <svg id="barcode"></svg>
+            </div>
+            
+            <div class="mt-10 p-10 border">
+
+                <div class="relative flex item-center justify-between mt-2 font-bold">
+                    <div class="text-red-700">Booking Details</div>
+                    <div class="absolute flex items-end justify-end text-4xl text-red-700 w-full">BOOKING</div>
+                </div>
+
+                <div class="flex flex-col">
+                        <div class="flex mt-2">
+                            <div class="font-bold">Company name :</div>
+                            <div class="px-2"><%= booking.company %></div>
+                        </div>
+
+                        <div class="flex mt-2">
+                            <div class="font-bold">Ship to :</div>
+                            <div class="px-2">DKSH BN20</div>
+                        </div>
+                            
+                        <div class="flex mt-2">
+                            <div class="font-bold">Slot time :</div>
+                            <div class="px-2"><%= booking.slot %></div>
+                        </div>
+
+                        <div class="flex mt-2">
+                            <div class="font-bold">Truck ID :</div>
+                            <div class="px-2"><%= booking.truckID %></div>
+                        </div>
+                </div>
+
+                <div class="mt-6 text-red-700 font-bold">Booking by</div>
+
+                        <div class="flex mt-2">
+                            <div class="font-bold">Name :</div>
+                            <div class="px-2"><%= booking.name %></div>
+                        </div>
+
+                        <div class="flex mt-2">
+                            <div class="font-bold">Email :</div>
+                            <div class="px-2"><%= booking.email %></div>
+                        </div>
+            </div>
+
+            <div class="mt-10 p-10 border">
+                <div class="flex">
+                    <div class="font-bold">Qty Pallet :</div>
+                    <div class="px-2"><%= booking.totl_pallet %></div>
+                </div>
+
+                <div class="flex mt-2">
+                    <div class="font-bold">Qty Cases :</div>
+                    <div class="px-2"><%= booking.totl_cases %></div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+
+
+</body>
+</html>
+
+<script>
+
+    function generateBarcode(docNo) {
+        JsBarcode('#barcode', docNo, {
+            format: 'code128',
+            displayValue: true,
+            fontSize: 14,
+            height: 30,
+            width: 1.5
+            
+        });
+    }
+
+    // Example usage (Set docNo manually or dynamically)
+    let docNo = "<%= booking.docno %>"; // Replace this with your actual document number
+        generateBarcode(docNo);
+
+</script>
+
+<%- include('footer') %>

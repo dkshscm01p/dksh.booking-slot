@@ -1,0 +1,187 @@
+<%- include('header') %>
+
+    <form method="post" action="/info">
+
+
+        <div class="flex flex-col items-center justify-center mt-4 min-h-fit">
+            <div class="flex flex-col rounded-xl border shadow-lg bg-white px-20 py-8">
+
+                <div class="flex items-end justify-end">
+                    <form action="/bookSchedule" method="get">
+                        <button
+                            class="relative bg-stone-300 text-black font-semibold text-xs hover:bg-stone-200 p-2 mt-2 rounded"
+                            type="submit" id="view">
+                            <i class="fa-regular fa-eye"></i> View
+                        </button>
+                    </form>
+                </div>
+
+                <div class="flex items-center justify-center">
+                    <span class="font-semibold text-2xl mt-2 text-sky-500">Information</span>
+                </div>
+
+                <div class="flex flex-col items-start justify-start space-y-4 mt-6">
+
+                    <div class="flex items-center">
+                        <label class="font-semibold w-28" for="">Company</label>
+                        <label class="font-semibold px-2 w-28" for="" name="company">
+                            <%= company %>
+                        </label>
+                    </div>
+
+                    <div class="flex">
+                        <label class="font-semibold w-28">Warehouse</label>
+                        <select class="w-48 border px-1 text-sm" name="warehouse" id="warehouse">
+                            <option value="BN">BN</option>
+                            <option value="BPI">BPI</option>
+                            <option value="BPO">BPO</option>
+                            <option value="PM">PM</option>
+                            <option value="TECH">TECH</option>
+                        </select>
+                    </div>
+
+                    <div class="flex" id="truckID">
+                        <label class="font-semibold w-28">Truck ID</label>
+                        <input class="px-2 border border-gray-300 placeholder:font-light w-48 text-sm" 
+                            name="truckID"
+                            placeholder="Enter your truck ID" required>
+                    </div>
+
+                    <div class="flex">
+                        <label class="font-semibold w-28">Truck type</label>
+                        <select class="px-1 border border-gray-300 w-48 text-sm" name="truckType" id="truckType">
+                            <option value='{"hour": 0.5, "slot": 1}'>4W</option>
+                            <option value='{"hour": 0.5, "slot": 1}'>4WJ</option>
+                            <option value='{"hour": 1, "slot": 2}'>6W</option>
+                            <option value='{"hour": 1, "slot": 2}'>6WJ</option>
+                            <option value='{"hour": 1, "slot": 2}'>10W</option>
+                            <option value='{"hour": 2, "slot": 4}'>10WD</option>
+                            <option value='{"hour": 2, "slot": 4}'>18W</option>
+                        </select>
+                    </div>
+
+                    <div class="flex">
+                        <label class="font-semibold w-28">Load type</label>
+                        <select class="px-1 border border-gray-300 w-48 text-sm" name="loadType" id="loadType">
+                            <option value="1">Pallet load</option>
+                            <option value="2">Floor load</option>
+                        </select>
+                    </div>
+
+                    <div class="flex" id="qtyPallet">
+                        <label for="" class="font-semibold w-28">Total Pallets</label>
+                        <input type="number" 
+                            name="qtyPallet"
+                            class="px-2 border border-gray-300 placeholder:font-light w-48 text-sm"
+                            placeholder="Enter the number of pallets" required>
+                    </div>
+
+                    <div class="flex" id="qtyCases">
+                        <label for="" class="font-semibold w-28">Total Cases</label>
+                        <input type="number" 
+                            name="qtyCases" 
+                            class="px-2 border border-gray-300 placeholder:font-light w-48 text-sm"
+                            placeholder="Enter the number cases" required>
+                    </div>
+
+
+                </div>
+
+                <div class="flex items-center justify-center mt-4">
+                    <span id="resultMessage" class="font-semibold text-lg text-red-600"></span>
+                </div>
+
+                <div>
+                    <input type="hidden" name="hours" id="hours">
+                    <input type="hidden" name="slots" id="slots">
+                </div>
+
+                <div class="flex items-center justify-center p-2 mt-6 rounded-lg">
+                    <button
+                        class="bg-black text-white rounded-lg p-2 text-sm w-full hover:bg-gradient-to-r from-stone-700 via-stone-500 to-stone-600"
+                        type="submit" id="nextBtn">Next
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </form>
+
+    <%- include('footer') %>
+
+        <script>
+
+            // Function to calculate and display results
+            function calculateAndDisplay() {
+                const truckTypeValue = JSON.parse(document.getElementById('truckType').value); // Parse JSON
+                const loadTypeValue = parseFloat(document.getElementById('loadType').value); // Get load type value
+
+                // Calculate total hours and slots
+                const hours = truckTypeValue.hour * loadTypeValue;
+                const slots = truckTypeValue.slot * loadTypeValue;
+
+                // Display the result
+                const resultMessage = ` ${slots} Slots (${hours} Hours)`;
+
+                // Update hidden input
+                document.getElementById('hours').value = hours;
+                document.getElementById('slots').value = slots;
+
+                document.getElementById('resultMessage').textContent = resultMessage;
+            }
+
+            // Initialize calculation on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                calculateAndDisplay();
+
+                // Add event listeners for dynamic updates
+                document.getElementById('truckType').addEventListener('change', calculateAndDisplay);
+                document.getElementById('loadType').addEventListener('change', calculateAndDisplay);
+            });
+
+
+            // Show input total pallet when pallet load is selected
+            const loadTypeSelect = document.getElementById('loadType');
+            const qtyPallet = document.getElementById('qtyPallet');
+            const nextBtn = document.getElementById('nextBtn');
+            const Inputs = document.querySelectorAll('#truckID input, #qtyPallet input, #qtyCases input');
+            const view = document.getElementById('view');
+
+            loadTypeSelect.addEventListener('change', () => {
+                if (loadTypeSelect.value == 1) {
+                    qtyPallet.classList.remove('hidden');
+                    qtyPallet.classList.add('flex');
+                } else {
+                    qtyPallet.classList.remove('flex');
+                    qtyPallet.classList.add('hidden');
+
+                }
+            });
+
+            view.addEventListener('click', () => {
+                Inputs.forEach(input => input.removeAttribute('required'))
+            })
+
+            nextBtn.addEventListener('click', () => {
+                if (loadTypeSelect.value == 1) {
+                    Inputs.forEach(input => input.setAttribute('required', true));
+                } else {
+                    // Set 'required' for all inputs except those inside '#qtyPallet'
+                    Inputs.forEach(input => {
+                        if (!input.closest('#qtyPallet')) {
+                            input.setAttribute('required', true);
+                        } else {
+                            input.removeAttribute('required'); // Ensure 'required' is not set for inputs inside '#qtyPallet'
+                        }
+                    });
+                }
+
+            })
+
+
+        </script>

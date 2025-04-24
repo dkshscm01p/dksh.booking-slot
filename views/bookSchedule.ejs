@@ -1,0 +1,274 @@
+<%- include('header') %>
+
+  <form action="/bookSchedule" method="post" id="dateForm">
+    <div class="bg-gray-700 min-h-screen p-4">
+
+
+      <div class="bg-slate-800 container shadow-xl rounded-xl p-4">
+        <!-- Input: วันที่ -->
+        <div class="flex items-start justify-between">
+          <input
+            class="ring-4 ring-cyan-600 rounded-sm text-sm text-center text-gray-900 bg-gray-100 py-1 focus:ring-2 focus:ring-black focus:outline-none"
+            style="width: 150px;" name="date" type="date" id="dateInput" value="<%= selectedDate %>">
+
+          <% if (session.level=='Admin' ) { %>
+            <div class="text-white" id="companyBooked"></div>
+            <% } %>
+
+              <!-- ข้อมูล Warehouse -->
+              <div class="flex flex-col items-start justify-start max-w-xs font-semibold text-sm text-white">
+                <span>Warehouse: <%= warehouse %></span>
+                <span regis-truckID="<%= truckID %>">Truck ID: <%= truckID %></span>
+                <span regis-slot="<%= slots %>">Slots: <%= slots %> (Hours: <%= hours %>)</span>
+              </div>
+        </div>
+
+        <div class="flex text-sm font-semibold text-white items-center justify-center space-x-2 mt-3">
+          <div class="w-5 h-4 rounded text-gray-500">
+            <i class="fa-solid fa-couch"></i>
+          </div>
+          <span>Available</span>
+          <div class="w-5 h-4 rounded">
+            <i class="fa-solid fa-couch text-cyan-600"></i>
+          </div>
+          <span>Selected</span>
+          <div class="w-5 h-4 rounded">
+            <i class="fa-solid fa-couch text-red-600"></i>
+          </div>
+          <span>Booked</span>
+          <i class="fa-regular fa-circle-xmark fa-md text-red-500"></i>
+          <span>Unavailable</span>
+        </div>
+
+        <div class="flex flex-col text-sm items-center justify-center w-full container mt-3">
+          <p class="text-white">
+            You have selected <span class="text-sky-200" id="count">0</span> slot
+          </p>
+          <!-- แถวหัวข้อแสดงตัวเลขประตู -->
+
+            <!-- Button -->
+          <div class="mt-1">
+            <button type="button" id="bookBtn"
+              class="bg-sky-600 text-white p-1 rounded-md font-semibold text-xs w-40 hidden hover:scale-110 duration-500" onclick="showConfirmDialog()">
+              Book slot
+            </button>
+          </div>
+
+          <div class="table-responsive overflow-y-hidden">
+            <div class="ml-10">
+            <table class="text-sm text-left mt-4 rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th class="text-center rounded-tl-md sticky left-0 z-0">Time/Dock</th>
+                  <% for (let i=1; i <=40; i++) { %>
+                    <th class="text-center <%= i === 40 ? 'rounded-tr-md' : '' %> ">
+                      <%= i %>
+                    </th>
+                    <% } %>
+                </tr>
+              </thead>
+              <tbody>
+
+                <% const timeSlots=["08:00-08:30", "08:30-09:00" , "09:00-09:30" , "09:30-10:00" , "10:00-10:30"
+                  , "10:30-11:00" , "11:00-11:30" , "11:30-12:00" ,"12:00-13:00" , "13:00-13:30" , "13:30-14:00"
+                  , "14:00-14:30" , "14:30-15:00" , "15:00-15:30" , "15:30-16:00" , "20:00-20:30" , "20:30-21:00"
+                  , "21:00-21:30" , "21:30-22:00" , "22:00-22:30" , "22:30-23:00" , "23:00-00:00" ]; %>
+                  <% timeSlots.forEach((timeSlot)=> { %>
+                    <tr>
+                      <td class="text-center px-2 bg-slate-900 h-6 sticky left-0">
+                        <%= timeSlot %>
+                      </td>
+                      <% for (let i=1; i <=40; i++) { %>
+                        <td>
+                          <% let isBooked=false; bookings.forEach((booking)=> {
+                            if (booking.slot === timeSlot && booking.dock == i) {
+                            isBooked = true;
+                            %>
+                            <div class="w-5 rounded" id="seatBooked" data-company="<%= booking.company %>">
+                              <i class="fa-solid fa-couch text-red-600"></i>
+                            </div>
+
+                            <% } }); if ( timeSlot=="12:00-13:00" || timeSlot=="23:00-00:00" ) { %>
+                              <div class="w-5 rounded">
+                                <i class="fa-solid fa-couch text-black"></i>
+                              </div>
+
+                              <% } if ( !isBooked && timeSlot !== "12:00-13:00" && timeSlot !== "23:00-00:00" ) { %>
+                                <div class="slot w-5 rounded" 
+                                     data-sdate="<%= selectedDate %>"
+                                     data-truckID="<%= truckID %>" 
+                                     data-dock="<%= i %>" 
+                                     data-slot="<%= timeSlot %>"
+                                     data-wh="<%= warehouse %>" 
+                                     onclick="toggleSlot(this)" 
+                                     style="cursor: pointer;">
+                                  <i class="fa-solid fa-couch hover:text-cyan-500 hover:scale-110 transition duration-200"></i>
+                                </div>
+                              <% } %>
+                              
+                        </td>
+                        <% } %>
+                    </tr>
+                    <% }) %>
+
+              </tbody>
+            </table>
+            </div>
+          </div>
+  </form>
+
+  </div>
+  </div>
+
+  <div id="confirmDialog" class="fixed inset-0 items-center justify-center z-50 backdrop-blur-sm hidden">
+    <div class="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
+      <div class="opacity-25 w-full h-full absolute z-10 inset-0 bg-black"></div>
+      <div
+        class="bg-white rounded-lg md:max-w-md md:mx-auto p-8 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative shadow-lg">
+        <div class="flex items-center justify-center mb-4">
+          <div
+            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-green-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h class="font-medium ml-2">Would you like to confirm the booking?</h>
+
+        </div>
+        <div class="flex items-end justify-end space-x-2 font-bold">
+          <form action="/addBook" method="post" id="bookingForm">
+            <input type="hidden" name="selectedSlots" id="selectedSlots">
+            <button id="submitButton" type="submit"
+              class="w-20 bg-green-600 text-white border rounded-sm p-1 px-2 shadow-md font-bold text-sm hover:bg-green-500"
+              onclick="submitBooking()">
+              Book
+            </button>
+          </form>
+          <button class="w-20 bg-gray-100 border rounded-sm p-1 px-2 shadow-md font-bold text-sm hover:bg-gray-50"
+            onclick="hideConfirmDialog()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('footer') %>
+
+
+    <style>
+      .center-table {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        padding: 10px;
+        /* เพิ่มพื้นที่รอบ */
+      }
+    </style>
+
+
+    <script>
+
+      // Add event listener to the date input [Change Date]
+      document.getElementById('dateInput').addEventListener('change', function () {
+        localStorage.setItem('selectedDate', this.value);
+        document.getElementById('dateForm').submit(); // Submit the form when date changes
+      });
+
+
+      // Confirm Dialog when click book button
+      function showConfirmDialog() {
+        document.getElementById('confirmDialog').classList.remove('hidden');
+      }
+
+      function hideConfirmDialog() {
+        document.getElementById('confirmDialog').classList.add('hidden');
+      }
+
+
+      let selectedSlots = [];
+      const count = document.getElementById('count');
+      const regisTruckID = document.querySelector('[regis-truckID]').getAttribute('regis-truckID')
+      const regisSlot = document.querySelector('[regis-slot]').getAttribute('regis-slot');
+
+      function toggleSlot(element) {
+        // Toggle slot selection
+        const isSelected = element.classList.contains('text-cyan-600');
+
+        if (isSelected) {
+          // If selected, deselect and revert color
+          element.classList.remove('text-cyan-600');
+
+          // Remove from selectedSlots array
+          const index = selectedSlots.findIndex(slot => slot.dock == element.getAttribute('data-dock') && slot.slot == element.getAttribute('data-slot'));
+          if (index !== -1) selectedSlots.splice(index, 1);
+        } else {
+
+          // If not selected, highlight as selected
+          element.classList.remove('text-gray-200');
+          element.classList.add('text-cyan-600');
+          // Add to selectedSlots array
+          selectedSlots.push({
+            date: element.getAttribute('data-sdate'),
+            wh: element.getAttribute('data-wh'),
+            truckID: element.getAttribute('data-truckID'),
+            dock: element.getAttribute('data-dock'),
+            slot: element.getAttribute('data-slot')
+          });
+
+          // Alert if a deffirent dock number is selected !
+          if (selectedSlots[0].dock !== element.getAttribute('data-dock')) {
+            alert('The dock number is different !')
+            // If selected, deselect and revert color
+            element.classList.remove('text-cyan-600');
+
+            // Remove from selectedSlots array
+            const index = selectedSlots.findIndex(slot => slot.dock == element.getAttribute('data-dock') && slot.slot == element.getAttribute('data-slot'));
+            if (index !== -1) selectedSlots.splice(index, 1);
+          }
+
+          // sort slot
+          selectedSlots.sort((a, b) => a.slot.localeCompare(b.slot));
+        }
+
+        // Update the count of selected slots
+        count.innerText = selectedSlots.length;
+        // Log the selected slots
+        console.log(selectedSlots);
+
+        // If slot suggest equal to selected slot then show button
+        if (selectedSlots.length == regisSlot && regisTruckID !== "") {
+          bookBtn.classList.remove('hidden')
+        } else {
+          bookBtn.classList.add('hidden')
+        }
+
+      }
+
+      document.getElementById('bookingForm').addEventListener('submit', function (event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Set the selected slots in the hidden input field as a JSON string
+        document.getElementById('selectedSlots').value = JSON.stringify(selectedSlots);
+
+        // Submit the form
+        this.submit();
+      });
+
+      // Hover for show company name for red seat
+      document.querySelectorAll('#seatBooked').forEach(seat => {
+        seat.addEventListener('mouseover', function () {
+          const companyName = seat.getAttribute('data-company'); // Get the company name
+          const companyBooked = document.getElementById('companyBooked');
+          companyBooked.textContent = "Company Booked : " + companyName || "Unknown Company"; // Display company name or fallback text
+        });
+
+        seat.addEventListener('mouseout', function () {
+          const companyBooked = document.getElementById('companyBooked');
+          companyBooked.textContent = ''; // Clear the company name when the mouse leaves
+        });
+      });
+
+    </script>

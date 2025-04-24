@@ -1,0 +1,60 @@
+<%- include('header') %>
+
+<div class="flex items-center justify-center">
+    <p id="count">0</p>
+</div>
+
+<div class="flex flex-wrap items-center justify-center min-h-screen gap-4 p-4">
+    <% for (let i = 1; i <= 40; i++) { %>
+        <div class="bg-gray-400 rounded-md p-4 hover:bg-gray-100 cursor-pointer"
+             onclick="toggleSlot(this)"
+             data-dock="<%= i %>">
+            <%= i %>
+        </div>
+    <% } %>
+</div>
+
+<div>
+    <%= selectedSlot.length %>
+</div>
+
+<script>
+    let selectedSlot = [];
+
+    function toggleSlot(element) {
+        const dock = element.getAttribute('data-dock');
+        const isSelected = element.classList.contains('bg-cyan-600');
+
+        if (isSelected) {
+            // Deselect the slot
+            element.classList.remove('bg-cyan-600');
+            element.classList.add('bg-gray-400');
+
+            // Remove the slot from selectedSlot
+            const index = selectedSlot.findIndex(slot => slot.dock === dock);
+            if (index !== -1) selectedSlot.splice(index, 1);
+
+        } else {
+            // Select the slot
+            element.classList.add('bg-cyan-600');
+            element.classList.remove('bg-gray-400');
+
+            // Add the slot to selectedSlot
+            selectedSlot.push({ dock });
+        }
+
+        // Sort the selectedSlot array numerically by dock
+        selectedSlot.sort((a, b) => Number(a.dock) - Number(b.dock));
+
+        // Log the updated array
+        console.log(selectedSlot);
+        const count = document.getElementById('count')
+        count.innerHTML = selectedSlot.length
+    }
+
+
+    
+
+</script>
+
+<%- include('footer') %>

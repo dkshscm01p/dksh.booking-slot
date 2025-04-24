@@ -1,0 +1,134 @@
+<%- include('header') %>
+
+<div class="min-h-screen bg-gray-700">
+    
+    <div class="flex items-start justify-between ml-4">
+        
+        <form action="/mySchedule" method="post" id="dateForm">
+        <input 
+        class="ring-4 ring-cyan-600 rounded-sm text-sm text-center text-gray-900 bg-gray-100 py-1 focus:ring-2 focus:ring-black focus:outline-none mt-4"
+        style="width: 150px;"
+        name="date"
+        type="date"
+        id="dateInput"
+        value="<%= selectedDate %>"
+        >
+        </form>
+        
+        <div class="flex items-end justify-end w-full gap-2">
+            <button onclick="exportTableToExcel()" class="bg-green-600 text-white p-2 px-3 rounded-md hover:bg-green-500 text-xs">
+                <i class="fa-solid fa-table mr-1"></i>
+                Export
+            </button>
+    
+            <form action="/deleteBooking" method="post" id="deleteForm">
+                <input type="hidden" name="selectedDelete" id="selectedDelete">
+                <button class="bg-red-500 text-white font-semibold p-2 px-3 rounded-md mr-4 mt-4 text-xs hover:bg-red-400" type="submit">
+                    <span class="material-symbols-outlined material-icons mr-1" style="font-size: 15px;">
+                        delete
+                    </span>Delete
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="table-responsive">
+        <table class="shadow-md mt-10 w-full text-white text-xs">
+            <thead class="bg-slate-900 rounded-xl">
+                <tr class="text-center">
+                    <th class="px-4 py-2 rounded-tl-lg" width="140px"></th>
+                    <th class="px-4 py-2">Document no</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Warehouse</th>
+                    <th class="px-4 py-2">Dock</th>
+                    <th class="px-4 py-2">Client</th>
+                    <th class="px-4 py-2">Name</th>
+                    <th class="px-4 py-2 rounded-tr-lg">Time</th>
+                    <th class="px-4 py-2"></th>
+                </tr>
+            </thead>
+            <tbody class="bg-slate-800">
+                <% bookings.forEach((bookings) => { %>
+                <tr class="text-center text-md" style="height: 35px;">
+                    <td>
+                        <input 
+                            id="" 
+                            type="checkbox" 
+                            onclick="toggleEvent(this)" 
+                            value="<%= bookings.docno %>" 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                            >
+                        
+                    </td>
+                    <td><%= bookings.docno %></td>
+                    <td><%= new Date(bookings.date).toLocaleDateString('en-GB') %></td>
+                    <td><%= bookings.wh %></td>
+                    <td><%= bookings.dock %></td>
+                    <td><%= bookings.company %></td>
+                    <td><%= bookings.name %></td>
+                    <td><%= bookings.slot %></td>
+                    <td>
+                        <a class="bg-sky-700 py-1 px-3 rounded" href="/printBookslot/<%= bookings.id %>">
+                            <i class="fa-solid fa-print text-white text-sm"></i>
+                        </a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<%- include('footer') %>
+
+<script>
+
+    // Change date
+    document.getElementById('dateInput').addEventListener('change', function() {
+        localStorage.setItem('selectedDate', this.value);
+        document.getElementById('dateForm').submit();
+    });
+
+    let selectedDelete = [];
+
+    function toggleEvent(element) {
+        let bookingID = element.value
+
+        if (element.checked) {
+            selectedDelete.push(bookingID);
+        } else {
+            selectedDelete = selectedDelete.filter(id => id !== bookingID)
+        }
+        console.log(selectedDelete)
+
+        document.getElementById('deleteForm').addEventListener('submit', function (event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // update hidden input field with selected IDs
+        document.getElementById('selectedDelete').value = JSON.stringify(selectedDelete);
+
+        // Submit the form
+        this.submit();
+      });
+   
+    }
+
+    function exportTableToExcel() {
+    let table = document.querySelector("table"); 
+    let clonedTable = table.cloneNode(true); // Clone the table to modify
+
+    // Remove first column from all rows
+    clonedTable.querySelectorAll("tr").forEach(row => {
+        if (row.children.length > 0) {
+            row.removeChild(row.children[0]); // Remove first column
+        }
+    });
+
+    let workbook = XLSX.utils.table_to_book(clonedTable, { sheet: "Bookings" });
+    XLSX.writeFile(workbook, "Bookings.xlsx");
+}
+    
+</script>

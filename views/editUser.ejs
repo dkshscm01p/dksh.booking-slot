@@ -1,0 +1,19 @@
+<%- include('header') %>
+
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div class="text-sm bg-white p-10 rounded-md shadow-md">
+            <div class="text-xl font-bold">Edit Profile</div>
+            <div class="mt-4 font-bold">Username</div>
+            <input type="text" class="border mt-2 px-2 py-1 w-full" value="<%= user.usr %>">
+            <div class="mt-2 font-bold">Password</div>
+            <input type="password" class="border mt-2 px-2 py-1 w-full" value="<%= user.pwd %>">
+            <div class="mt-2 font-bold">Level</div>
+            <select class="border mt-2 px-1 py-1 w-full">
+                <option value="Admin" <%= user.level === 'Admin' ? 'selected' : '' %>>Admin</option>
+                <option value="Member" <%= user.level === 'Member' ? 'selected' : '' %>>Member</option>
+            </select>
+            <button type="submit" class="mt-3 p-2 bg-red-600 w-full rounded-md text-white">Update Profile</button>
+        </div>
+    </div>
+
+<%- include('footer') %>
