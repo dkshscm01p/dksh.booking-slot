@@ -13,20 +13,20 @@
     "cookie-parser": "~1.4.4",
     "dayjs": "^1.11.13",
     "debug": "~2.6.9",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
     "express-session": "^1.18.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.10"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
-    "concurrently": "^9.1.0",
+    "concurrently": "^9.1.2",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.15"
+    "tailwindcss": "^3.4.17"
   },
   "main": "app.js",
   "keywords": [],
