@@ -8,22 +8,22 @@
         <!-- Input: วันที่ -->
         <div class="flex items-start justify-between">
           <input
-            class="ring-4 ring-cyan-600 rounded-sm text-sm text-center text-gray-900 bg-gray-100 py-1 focus:ring-2 focus:ring-black focus:outline-none"
-            style="width: 150px;" name="date" type="date" id="dateInput" value="<%= selectedDate %>">
+            class="ring-4 ring-cyan-600 rounded-sm text-sm text-center text-gray-900 bg-gray-100 py-1 px-2 focus:ring-2 focus:ring-black focus:outline-none"
+            style="width: 120px;" name="date" type="date" id="dateInput" value="<%= selectedDate %>">
 
           <% if (session.level=='Admin' ) { %>
             <div class="text-white" id="companyBooked"></div>
             <% } %>
 
               <!-- ข้อมูล Warehouse -->
-              <div class="flex flex-col items-start justify-start max-w-xs font-semibold text-sm text-white">
+              <div class="flex flex-col items-start justify-start max-w-xs font-semibold text-xs sm:text-sm md:xs text-white">
                 <span>Warehouse: <%= warehouse %></span>
                 <span regis-truckID="<%= truckID %>">Truck ID: <%= truckID %></span>
                 <span regis-slot="<%= slots %>">Slots: <%= slots %> (Hours: <%= hours %>)</span>
               </div>
         </div>
 
-        <div class="flex text-sm font-semibold text-white items-center justify-center space-x-2 mt-3">
+        <div class="flex text-xs sm:text-xs md:text-sm font-semibold text-white items-center justify-center space-x-2 mt-3">
           <div class="w-5 h-4 rounded text-gray-500">
             <i class="fa-solid fa-couch"></i>
           </div>
@@ -59,7 +59,7 @@
             <table class="text-sm text-left mt-4 rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
               <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th class="text-center rounded-tl-md sticky left-0 z-0">Time/Dock</th>
+                  <th class="text-center rounded-tl-md sticky left-0 z-20 bg-gray-100 w-32">Time/Dock</th>
                   <% for (let i=1; i <=40; i++) { %>
                     <th class="text-center <%= i === 40 ? 'rounded-tr-md' : '' %> ">
                       <%= i %>
@@ -102,7 +102,8 @@
                                      data-wh="<%= warehouse %>" 
                                      onclick="toggleSlot(this)" 
                                      style="cursor: pointer;">
-                                  <i class="fa-solid fa-couch hover:text-cyan-500 hover:scale-110 transition duration-200"></i>
+                                  <i class="fa-solid fa-couch "></i>
+                                  <!-- hover:text-cyan-500 hover:scale-110 transition duration-200 -->
                                 </div>
                               <% } %>
                               
